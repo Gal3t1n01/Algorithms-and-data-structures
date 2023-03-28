@@ -1,0 +1,195 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct oe{
+    int x;
+    struct oe *sljedeci;
+    struct oe *prosli;
+}OE;
+
+void gen_arr(int*,int);
+void dodajElementNaKraj(OE**, OE**, int);
+void ispisiListu(OE*);
+int sekv_pret_arr(int*, int, int);
+int sekv_pret_pp(OE*, int);
+
+
+int main(){
+    clock_t start,end;
+    OE *glava = NULL;
+    OE *zadnji = NULL;
+    int n,x,index;
+    int V[n];
+    start = clock();
+    gen_arr(V,n);
+    end = clock();
+    printf("\nVrijeme trajanja generiranja niza je %ldms\n", end-start);
+
+    
+    start = clock();
+    for(int i = 0; i<n; i++){ //pretvorba niza u povezani popis
+        dodajElementNaKraj(&glava,&zadnji,V[i]);
+    }
+    end = clock();
+    
+    printf("\nVrijeme trajanja generiranja PP je %ldms\n", end-start);
+    
+    printf("\nSekvencijalno pretrazi niz i PP za element: \n");
+    scanf("%d", &x);
+    start = clock();
+    index = sekv_pret_arr(V,n,x);
+    end = clock();
+    printf("\nVrijeme trajanja pretrazivanja niza je %ldms\n", end-start);
+
+    if(index == -1)
+        printf("Element ne postoji u nizu!\n");
+    else
+        printf("Element se nalazi na poziciji: %d\n", index);
+
+    start = clock();
+    index = sekv_pret_pp(glava, x);
+    end = clock();
+    printf("\nVrijeme trajanja pretrazivanja PP je %ldms\n", end-start);
+
+    if(index == -1)
+        printf("Element ne postoji u PP!\n");
+    else
+        printf("Element se nalazi na poziciji: %d\n", index);
+
+    free(V);
+    glava = oslobodiMemoriju(glava);
+    return 0;
+}
+    
+void gen_arr(int *V, int n){
+    V = malloc(sizeof(int));
+    printf("Upisi broj elemenata u listu: ");
+    scanf("%d",&n);
+    int i;
+    
+    
+    for(i=0;i<n;i++){
+        V[i] = rand() % 150;
+    }
+}
+
+void dodajElementNaKraj(OE** glava, OE** zadnji, int x){
+
+    OE* noviCvor = (OE*) malloc(sizeof(OE));
+    noviCvor->x = x;
+    noviCvor->sljedeci = NULL;
+
+    if(*glava == NULL){
+        *glava = noviCvor;
+        *zadnji = noviCvor;
+    }
+    else{
+        (*zadnji)->sljedeci = noviCvor;
+        *zadnji=(*zadnji)->sljedeci;
+    }
+
+    return;
+}
+
+void ispis(OE* glava){
+    
+    OE* temp = glava;
+
+    while(temp != NULL){
+        printf("%d->", temp->x);
+        temp = temp->sljedeci;
+    }
+    printf("NULL\n");
+}
+
+int sekv_pret_arr(int* V, int n, int x){
+
+    for(int i = 0; i<n ;i++){
+        if(V[i] == x)
+            return i;
+    }
+    return -1;
+}
+
+int sekv_pret_pp(OE* glava, int x){
+
+    OE* temp = glava;
+    int i=0;
+
+    while(temp != NULL){
+        if(temp->x == x)
+            return i;
+
+        i++;
+        temp=temp->sljedeci;
+    }
+    return -1;
+}
+ 
+  OE* oslobodiMemoriju(OE *glava){
+
+    OE* obrisiCvor = NULL;
+
+    while(glava){
+        obrisiCvor = glava;
+        glava = glava->sljedeci;
+        free(obrisiCvor);
+    }
+    printf("Memorija oslobodjena!\n");
+    return NULL;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
