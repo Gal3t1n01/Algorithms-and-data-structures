@@ -5,7 +5,7 @@
 void gen_arr(int V[], int n, int dg, int gg){
 
     for(int i=0;i<n;i++){
-        V[i] = rand() % 50;
+        V[i] = (rand() / (float)RAND_MAX) * (gg - dg + 1) + dg;
     }
 }
 
@@ -15,7 +15,7 @@ int sekv_pret(int V[], int n, int x){
     printf("Trazeni broj sekv_pret: ");
     scanf("%d", &x);
 
-    for(i=0;i<n;i++){
+    for(i=0;i<n-1;i++){
         if(V[n] == x)
             pron = 1;
     }
