@@ -1,100 +1,96 @@
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 
-void gen_arr(int V[], int n, int dg, int gg){
+#define MIN 0
+#define MAX 100
 
-    for(int i=0;i<n;i++){
-        V[i] = (rand() / (float)RAND_MAX) * (gg - dg + 1) + dg;
+void gen_arr(float V[], int n, float dg, float gg);
+int sekv_pret(float V[], int n, float x);
+void sort(float V[], int n);
+int bin_pret(float V[], int n, float x);
+
+int main() {
+    srand(time(NULL));
+    int n, i, x, pronadjen_sekv, pronadjen_bin;
+    float *V;
+    printf("Unesite velicinu polja: ");
+    scanf("%d", &n);
+    V = malloc(n * sizeof(float));
+    if (V == NULL) {
+        printf("Greska pri alociranju memorije.\n");
+        return 1;
     }
-}
-
-int sekv_pret(int V[], int n, int x){
-    int i,pron = 0;
-
-    printf("Trazeni broj sekv_pret: ");
+    gen_arr(V, n, MIN, MAX);
+    printf("Ispis polja:\n");
+    for (i = 0; i < n; i++) {
+        printf("%.2f ", V[i]);
+    }
+    printf("\n");
+    printf("Unesite broj koji zelite pronaci: ");
     scanf("%d", &x);
-
-    for(i=0;i<n-1;i++){
-        if(V[n] == x)
-            pron = 1;
+    pronadjen_sekv = sekv_pret(V, n, x);
+    sort(V, n);
+    pronadjen_bin = bin_pret(V, n, x);
+    if (pronadjen_sekv == -1) {
+        printf("Trazeni broj %d se ne nalazi u polju (sekvencijalno pretrazivanje).\n", x);
     }
-
-    if(pron == 1)
-        printf("\nBroj postoji u listi: %d", V[x]);
-    else
-        printf("\nBroj ne postoji u listi: %d", -1);
+    else {
+        printf("Trazeni broj %d se nalazi na indeksu %d (sekvencijalno pretrazivanje).\n", x, pronadjen_sekv);
+    }
+    if (pronadjen_bin == -1) {
+        printf("Trazeni broj %d se ne nalazi u polju (binarno pretrazivanje).\n", x);
+    }
+    else {
+        printf("Trazeni broj %d se nalazi na indeksu %d (binarno pretrazivanje).\n", x, pronadjen_bin);
+    }
+    free(V);
+    return 0;
 }
 
-void sort(int V[], int n){
+void gen_arr(float V[], int n, float dg, float gg) {
+    int i;
+    for (i = 0; i < n; i++) {
+        V[i] = dg + (float) rand() / RAND_MAX * (gg - dg);
+    }
+}
 
-    for(int s = 0; s < n-1;s++){
-        for(int i = 0; i < n - s - 1;i++){
-
-            if(V[i] > V[i+1]){
-                int temp = V[i];
-                V[i] = V[i+1];
-                V[i+1] = temp;
-            }
+int sekv_pret(float V[], int n, float x) {
+    int i;
+    for (i = 0; i < n; i++) {
+        if (V[i] == x) {
+            return i;
         }
     }
-
-    /*for(int i = 0; i < n;i++){
-        printf("%d  ", V[i]);
-    }*/
-
-    printf("\n");
-}
-
-int bin_pret(int V[], int n, int x){
-    int low = 0;
-    int high = 0;
-    while(low >= high){
-        int mid = low + (high - low) / 2;
-
-        if(V[mid] == x)
-            return mid;
-
-        if(V[mid] < x)
-            low = mid + 1;
-        else
-            high = mid - 1;
-    }
-
     return -1;
 }
 
-int main(){
-
-    int n = 0;
-    int x = 0;
-
-
-
-    time_t t1, t2,t3,t4,t5,t6,t7;
-    t1=clock();
-
-    printf("Broj clanova polja n: ");
-    scanf("%d", &n);
-    int *V[n];
-    *V = (int *) malloc(n * sizeof(int));
-    t3 = clock();
-    gen_arr(V, n, 0, 200);
-    t4=clock();
-    sekv_pret(V,n,x);
-    t5=clock();
-    sort(V, n);
-    t6=clock();
-    bin_pret(V, n, x);
-    t7 = clock();
-
-    t2=clock();
-
-    printf("\nVrijeme potrebno za cijeli program: %ld\n", t2-t1);
-    printf("\nGen: %ld\n", t3-t4);
-    printf("\nsekv: %ld\n", t4-t5);
-    printf("\nsort: %ld\n", t5-t6);
-    printf("\nbin: %ld\n", t6-t7);
-
-    free(V);
+void sort(float V[], int n) {
+    int i, j;
+    float temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (V[i] > V[j]) {
+                temp = V[i];
+                V[i] = V[j];
+                V[j] = temp;
+            }
+        }
+    }
+}
+int bin_pret(float V[], int n, float x) {
+    int l = 0, r = n - 1;
+    while (l <= r) {
+        int m = (l + r) / 2;
+        if (V[m] == x) {
+            return m;
+        }
+        else if (V[m] < x) {
+            l = m + 1;
+        }
+        else {
+            r = m - 1;
+        }
+    }
+    return -1;
 }
