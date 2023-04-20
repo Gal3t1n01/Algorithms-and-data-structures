@@ -1,0 +1,196 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MIN 0
+#define MAX 100
+
+void gen_arr(float V[], int n, float dg, float gg);
+void swap(float *xp, float *yp);
+void bubbleSort(float V[], int n);
+void printArray(float V[], int size);
+void heapify(float V[], int n, int i);
+void heapSort(float *V, int n);
+void merge(float *V, int l, int m, int r);
+void mergeSort(float *V, int l, int r);
+
+int main(){
+    
+    clock_t start,stop;
+	float *V;
+	int n,i;
+    printf("Unesite velicinu polja: ");
+    scanf("%d", &n);
+    V = malloc(n * sizeof(int));
+    
+    gen_arr(V, n, MIN, MAX);
+    /*printf("Ispis polja:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%.2f ", V[i]);
+    }*/
+    
+    start = clock();
+    bubbleSort(V, n);
+    stop = clock();
+    printf("Trajanje bubbla: %ld ms\n",(stop-start));
+    
+    
+    start = clock();
+    heapSort(V,n);
+    stop = clock();
+    printf("Trajanje heap sorta: %ld s\n", (stop - start));
+    
+    
+    start = clock();
+    mergeSort(V,0,n-1);
+    stop = clock();
+    printf("Trajanje merge sorta: %ld s\n", (stop - start));
+    //printf("Sorted array: \n");
+    //printArray(V, n);
+}
+
+void gen_arr(float V[], int n, float dg, float gg) {
+    int i;
+    for (i = 0; i < n; i++) {
+        V[i] = dg + (float) rand() / RAND_MAX * (gg - dg);
+    }
+}
+
+void swap(float *xp, float *yp)
+{
+int temp = *xp;
+*xp = *yp;
+*yp = temp;
+}
+
+void bubbleSort(float V[], int n)
+{
+int i, j;
+    for (i = 0; i < n-1; i++)
+        for (j = 0; j < n-i-1; j++)
+            if (V[j] > V[j+1])
+            swap(&V[j], &V[j+1]);
+}
+
+
+
+void printArray(float V[], int size)
+{
+int i;
+for (i=0; i < size; i++)
+printf("%.2f ", V[i]);
+printf("n");
+}
+
+void heapify(float *V, int n, int i ){
+        int najveci = i;
+        int lijevi = 2 * i + 1;
+        int desni = 2 * i +2;
+
+        if (lijevi < n && V[lijevi] > V[najveci] ){
+            najveci = lijevi;
+        }
+
+        if (desni < n && V[desni] > V[najveci]){
+            najveci = desni;
+        }
+
+        if (najveci != i){
+            int temp = V[i];
+            V[najveci] = temp;
+            heapify(V, n, najveci);
+        }
+    }
+    
+void heapSort(float *V, int n){
+        for(int i = n/2 - 1; i >= 0; i-- ){
+            heapify(V, n, i);
+        }
+    
+
+        for(int i = n - 1; i > 0; i--){
+            int temp = V[0];
+            V[0] = V[i];
+            V[i] = temp;
+            heapify(V, i, 0);
+        }
+
+    }
+
+void merge(float *V, int l, int m, int r){
+        int i,j,k;
+        int n1 = m-l +1;
+        int n2 = r-m;
+        int L[n1], R[n2];
+
+        for(i = 0; i < n1; i++){
+            L[i] = V[l+i];
+        }
+
+        for(j = 0; j< n2; j++){
+            R[j] = V[m + 1 + j];
+        }
+        i = 0;
+        j = 0;
+        k = l;
+
+        while( i < n1 && j < n2){
+            if(L[i] <= R[j]){
+                V[k] = L[i];
+                i++;
+            }
+
+            else{
+                V[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+        while(i < n1){
+            V[k] = L[i];
+            i++;
+            k++;
+        }
+    
+        while(j < n2){
+            V[k] = R[j];
+            j++;
+            k++;
+        }
+    
+    }
+
+
+    void mergeSort(float *V, int l, int r){
+        if(l<r){
+            int m = l + (r - l) / 2;
+            mergeSort(V, l, m);
+            mergeSort(V, m + 1, r);
+            merge(V, l, m, r);        
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
